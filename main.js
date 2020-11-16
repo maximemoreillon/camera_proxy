@@ -15,6 +15,9 @@ app.use(cors())
 
 const proxy = httpProxy.createProxyServer()
 
+const env_var_prefix = 'CAM'
+
+
 let handle_proxy = (req, res, options) => {
   proxy.web(req, res, options, (error) => {
     res.status(500).send(`The proxy failed to retrieve resource at ${process.env.PROXY_ROOT}`)
@@ -35,7 +38,7 @@ app.get('/', (req, res) => {
 app.get('/cameras',auth.authenticate, (req,res) => {
   let cameras = []
   for (var variable in process.env) {
-    if(variable.includes('CAMERA_')) {
+    if(variable.includes(`${env_var_prefix}`)) {
       const camera_name = variable.split('_')[1].toLowerCase()
       cameras.push({
         variable: variable,
@@ -52,7 +55,6 @@ app.get('/cameras',auth.authenticate, (req,res) => {
 app.all('/cameras/:camera*',auth.authenticate, (req,res) => {
 
   const camera_name = req.params.camera
-  const env_var_prefix = 'CAMERA'
 
   const camera_name_formatted = camera_name.toUpperCase().replace('-','_')
   const target_hostname = process.env[`${env_var_prefix}_${camera_name_formatted}`]
