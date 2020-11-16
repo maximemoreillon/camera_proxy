@@ -18,6 +18,9 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 80
+        envFrom:
+        - secretRef:
+           name: environment-variables
 ---
 apiVersion: v1
 kind: Service
