@@ -21,6 +21,11 @@ spec:
         envFrom:
         - secretRef:
            name: environment-variables
+        env:
+          - name: CAMERA_LIVING
+            value: http://192.168.1.12:8080/video
+          - name: CAMERA_KITCHEN
+            value: http://192.168.1.13:8080/video
 ---
 apiVersion: v1
 kind: Service
