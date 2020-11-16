@@ -38,7 +38,7 @@ app.get('/', (req, res) => {
 app.get('/cameras',auth.authenticate, (req,res) => {
   let cameras = []
   for (var variable in process.env) {
-    if(variable.includes(`${env_var_prefix}`)) {
+    if(variable.includes(`${env_var_prefix}_`)) {
       const camera_name = variable.split('_')[1].toLowerCase()
       cameras.push({
         variable: variable,
