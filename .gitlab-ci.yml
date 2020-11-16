@@ -1,0 +1,19 @@
+stages:
+  - containerization
+
+variables:
+  APPLICATION_NAME: camera-proxy
+  DOCKER_IMAGE: ${DOCKER_HUB_USERNAME}/${APPLICATION_NAME}
+
+containerization:
+  stage: containerization
+  tags:
+    - moreillon
+  script:
+    # Docker hub login
+    - echo "${DOCKER_HUB_PASSWORD}" | docker login --username ${DOCKER_HUB_USERNAME} --password-stdin;
+    # Building and pushing container image
+    - docker build -t ${DOCKER_IMAGE} .
+    - docker push ${DOCKER_IMAGE}
+    # Cleanup
+    - docker image rm ${DOCKER_IMAGE}
