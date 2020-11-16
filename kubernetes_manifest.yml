@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: camera-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: camera-proxy
+  template:
+    metadata:
+      labels:
+        app: camera-proxy
+    spec:
+      containers:
+      - name: camera-proxy
+        image: moreillon/camera-proxy
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: camera-proxy
+spec:
+  ports:
+  - port: 80
+  selector:
+    app: camera-proxy
+  type: ClusterIP
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: camera-proxy
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod" # This is necessary, no idea why
+spec:
+  tls:
+  - hosts:
+    - api.cameras.home.maximemoreillon.com
+    secretName: camera-proxy
+  rules:
+  - host: api.cameras.home.maximemoreillon.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: camera-proxy
+          servicePort: 80

@@ -28,6 +28,7 @@ app.get('/', (req, res) => {
     author: 'Maxime MOREILLON',
     application_name: 'Camera proxy',
     version: pjson.version,
+    authentication_api_url: process.env.AUTHENTICATION_API_URL || 'UNDEFINED',
   })
 })
 
