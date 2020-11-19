@@ -26,6 +26,10 @@ spec:
             value: http://192.168.1.12:8080/video
           - name: CAM_KITCHEN
             value: http://192.168.1.13:8080/video
+          - name: CAM_BEDROOM
+            value: http://192.168.1.161/stream
+          - name: CAM_TEST
+            value: https://cdn.maximemoreillon.com/people.jpg
 ---
 apiVersion: v1
 kind: Service
@@ -34,9 +38,10 @@ metadata:
 spec:
   ports:
   - port: 80
+    nodePort: 30007
   selector:
     app: camera-proxy
-  type: ClusterIP
+  type: NodePort
 ---
 apiVersion: extensions/v1beta1
 kind: Ingress
