@@ -20,7 +20,7 @@ const env_var_prefix = 'CAM'
 
 let handle_proxy = (req, res, options) => {
   proxy.web(req, res, options, (error) => {
-    res.status(500).send(`The proxy failed to retrieve resource at ${process.env.PROXY_ROOT}`)
+    res.status(500).send(error)
     console.log(error)
   })
 }
