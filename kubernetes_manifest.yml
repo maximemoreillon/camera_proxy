@@ -25,11 +25,9 @@ spec:
           - name: CAM_LIVING
             value: http://192.168.1.12:8080/video
           - name: CAM_KITCHEN
-            value: http://192.168.1.13:8080/video
+            value: http://192.168.1.180/stream
           - name: CAM_BEDROOM
             value: http://192.168.1.161/stream
-          - name: CAM_CORRIDOR
-            value: http://192.168.1.180/stream
 ---
 apiVersion: v1
 kind: Service
