@@ -3,12 +3,12 @@ const dotenv = require('dotenv')
 const httpProxy = require('http-proxy')
 const cors = require('cors')
 const pjson = require('./package.json')
-const auth = require('@moreillon/authentication_middleware')
+const auth = require('@moreillon/express_identification_middleware')
 
 dotenv.config()
 
 const PORT = process.env.PORT || 80
-
+const auth_options = { url: `${process.env.AUTHENTICATION_API_URL}/whoami` }
 const app = express()
 
 app.use(cors())
@@ -35,7 +35,7 @@ app.get('/', (req, res) => {
   })
 })
 
-app.get('/cameras',auth.authenticate, (req,res) => {
+app.get('/cameras',auth(auth_options), (req,res) => {
   let cameras = []
   for (var variable in process.env) {
     if(variable.includes(`${env_var_prefix}_`)) {
@@ -52,7 +52,7 @@ app.get('/cameras',auth.authenticate, (req,res) => {
   res.send(cameras)
 })
 
-app.all('/cameras/:camera*',auth.authenticate, (req,res) => {
+app.all('/cameras/:camera*',auth(auth_options), (req,res) => {
 
   const camera_name = req.params.camera
 
