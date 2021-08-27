@@ -2,9 +2,11 @@ const express = require('express')
 const dotenv = require('dotenv')
 const httpProxy = require('http-proxy')
 const cors = require('cors')
+const bodyParser = require('body-parser')
 const pjson = require('./package.json')
 const auth = require('@moreillon/express_identification_middleware')
-
+const db = require('./db.js')
+const camera_router = require('./routes/cameras.js')
 dotenv.config()
 
 const PORT = process.env.PORT || 80
@@ -12,13 +14,15 @@ const auth_options = { url: `${process.env.AUTHENTICATION_API_URL}/whoami` }
 const app = express()
 
 app.use(cors())
+app.use(bodyParser.json())
+
 
 const proxy = httpProxy.createProxyServer()
 
 const env_var_prefix = 'CAM'
 
 
-let handle_proxy = (req, res, options) => {
+const handle_proxy = (req, res, options) => {
   proxy.web(req, res, options, (error) => {
     res.status(500).send(error)
     console.log(error)
@@ -35,52 +39,7 @@ app.get('/', (req, res) => {
   })
 })
 
-app.get('/cameras',auth(auth_options), (req,res) => {
-  let cameras = []
-  for (var variable in process.env) {
-    if(variable.includes(`${env_var_prefix}_`)) {
-      const camera_name = variable.split('_')[1].toLowerCase()
-      cameras.push({
-        variable: variable,
-        name: camera_name,
-        local_url: process.env[variable],
-        route: `cameras/${camera_name}`
-      })
-    }
-  }
-
-  res.send(cameras)
-})
-
-app.all('/cameras/:camera*',auth(auth_options), (req,res) => {
-
-  const camera_name = req.params.camera
-
-  const camera_name_formatted = camera_name.toUpperCase().replace('-','_')
-  const target_hostname = process.env[`${env_var_prefix}_${camera_name_formatted}`]
-
-  if(!target_hostname) {
-    return res.status(404).send(`The Proxy is not configured to handle the camera called '${camera_name}'`)
-  }
-
-  const original_path = req.originalUrl
-
-  // manage_path
-  let path_split = original_path.split('/')
-
-  // Remove /proxy/:service_name
-  path_split.splice(1,2)
-  const new_path =  path_split.join('/')
-
-  // Assemble the target_url
-  const target_url = `${target_hostname}${new_path}`
-
-  const proxy_options = { target: target_url, ignorePath: true}
-
-  console.log(`Proxying ${target_url}`)
-
-  handle_proxy(req, res, proxy_options)
-})
+app.use('/cameras',auth(auth_options),camera_router)
 
 
 app.listen(PORT, () => {
