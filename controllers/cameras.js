@@ -10,6 +10,16 @@ const handle_proxy = (req, res, options) => {
   })
 }
 
+const error_handling = (res) => {
+  return (error) => {
+    const code = error.code || 500
+    const message = error.message || error
+    res.status(code).send(message)
+    console.error(message)
+  }
+
+}
+
 
 exports.add_camera = (req, res) => {
 
@@ -21,10 +31,7 @@ exports.add_camera = (req, res) => {
       res.send(result)
       console.log(`Camera ${result._id} saved in MongoDB`)
     })
-    .catch(error => {
-      res.status(500).send(error)
-      console.log(error)
-    })
+    .catch(error_handling(res))
 }
 
 exports.remove_camera = (req, res) => {
@@ -34,10 +41,7 @@ exports.remove_camera = (req, res) => {
       res.send(result)
       console.log(`Camera ${camera_id} removed`)
     })
-    .catch((error) => {
-      res.status(500).send(error)
-      console.log(error)
-    })
+    .catch(error_handling(res))
 }
 
 exports.update_camera = (req, res) => {
@@ -49,10 +53,7 @@ exports.update_camera = (req, res) => {
       res.send(result)
       console.log(`Camera ${task_id} updated in MongoDB`)
     })
-    .catch(error => {
-      res.status(500).send(error)
-      console.log(error)
-    })
+    .catch(error_handling(res))
 }
 
 exports.get_all_cameras = (req, res) => {
@@ -61,23 +62,18 @@ exports.get_all_cameras = (req, res) => {
       res.send(result)
       console.log(`Cameras queried`)
     })
-    .catch((error) => {
-      res.status(500).send(error)
-      console.log(error)
-    })
+    .catch(error_handling(res))
 }
 
 exports.get_camera = (req, res) => {
   const {camera_id} = req.params
   Camera.findOne({_id:camera_id})
-    .then( (result) => {
-      res.send(result)
+    .then( (found_camera) => {
+      if(!found_camera) throw {code: 404, message: 'Camera not found'}
+      res.send(found_camera)
       console.log(`Camera ${camera_id} queried`)
     })
-    .catch((error) => {
-      res.status(500).send(error)
-      console.log(error)
-    })
+    .catch(error_handling(res))
 }
 
 
@@ -88,14 +84,12 @@ exports.get_stream = (req,res) => {
   const {camera_id} = req.params
   Camera.findOne({_id:camera_id})
     .then( (found_camera) => {
+      if(!found_camera) throw {code: 404, message: 'Camera not found'}
       const proxy_options = { target: found_camera.url, ignorePath: true}
       console.log(`Streaming ${found_camera.url}`)
       handle_proxy(req, res, proxy_options)
     })
-    .catch((error) => {
-      res.status(500).send(error)
-      console.log(error)
-    })
+    .catch(error_handling(res))
 
   // const camera_name_formatted = camera_name.toUpperCase().replace('-','_')
   // const target_hostname = process.env[`${env_var_prefix}_${camera_name_formatted}`]
