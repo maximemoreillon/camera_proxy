@@ -29,14 +29,15 @@ app.get('/', (req, res) => {
     author: 'Maxime MOREILLON',
     application_name: 'Camera proxy',
     version: version,
+    mongodb: { url: db.url, db: db.db },
     auth: {
       api_url: AUTHENTICATION_API_URL,
       group_auth: {
         url: GROUP_AUTHORIZATION_URL,
         groups: AUTHORIZED_GROUPS
       }
-    }
-    mongodb: { url: db.url, db: db.db },
+    },
+    
   })
 })
 
