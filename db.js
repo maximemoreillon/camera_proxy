@@ -3,17 +3,22 @@ const dotenv = require('dotenv')
 
 dotenv.config()
 
-const db_name = process.env.MONGODB_DB || 'camera_proxy'
+const {
+  MONGODB_URL = 'mongodb://mongo',
+  MONGODB_DB = 'camera_proxy',
+} = process.env
+
 // Connection parameters
-const mongodb_url = `${process.env.MONGODB_URL}/${db_name}`
-const mongodb_options = {
+const connection_string = `${MONGODB_URL}/${MONGODB_DB}`
+const options = {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }
 
 // Connect to MongoDB
-mongoose.connect(mongodb_url, mongodb_options)
-  .then(() => { console.log('Mongoose connected') })
+mongoose.connect(connection_string, options)
+  .then(() => { console.log('[Mongoose] connected') })
   .catch((error) => { console.log(error) })
 
-// Todo: reconnect
+exports.db = MONGODB_DB
+exports.url = MONGODB_URL

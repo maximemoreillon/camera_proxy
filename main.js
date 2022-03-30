@@ -1,47 +1,51 @@
 const express = require('express')
 const dotenv = require('dotenv')
-const httpProxy = require('http-proxy')
 const cors = require('cors')
-const bodyParser = require('body-parser')
-const pjson = require('./package.json')
+const {version} = require('./package.json')
 const auth = require('@moreillon/express_identification_middleware')
+const group_auth = require('@moreillon/express_group_based_authorization_middleware')
 const db = require('./db.js')
 const camera_router = require('./routes/cameras.js')
 dotenv.config()
 
-const PORT = process.env.PORT || 80
-const auth_options = { url: `${process.env.AUTHENTICATION_API_URL}/whoami` }
+
+console.log(`Camera proxy v${version}`)
+
+const {
+  PORT = 80,
+  AUTHENTICATION_API_URL,
+  AUTHORIZED_GROUPS,
+  GROUP_AUTHORIZATION_URL
+} = process.env
+
 const app = express()
-
 app.use(cors())
-app.use(bodyParser.json())
+app.use(express.json())
 
-
-const proxy = httpProxy.createProxyServer()
-
-const env_var_prefix = 'CAM'
-
-
-const handle_proxy = (req, res, options) => {
-  proxy.web(req, res, options, (error) => {
-    res.status(500).send(error)
-    console.log(error)
-  })
-}
 
 app.get('/', (req, res) => {
 
   res.send({
     author: 'Maxime MOREILLON',
     application_name: 'Camera proxy',
-    version: pjson.version,
-    authentication_api_url: process.env.AUTHENTICATION_API_URL || 'UNDEFINED',
+    version: version,
+    authentication_api_url: AUTHENTICATION_API_URL || 'UNDEFINED',
+    mongodb: { url: db.url, db: db.db },
   })
 })
 
+const auth_options = { url: `${AUTHENTICATION_API_URL}/whoami` }
 app.use('/cameras',auth(auth_options),camera_router)
 
+if(AUTHORIZED_GROUPS && GROUP_AUTHORIZATION_URL) {
+  console.log(`[Auth] Enabling group-based authorization`)
+  const group_auth_options = {
+    url: GROUP_AUTHORIZATION_URL,
+    groups: AUTHORIZED_GROUPS.split(',')
+  }
+  app.use(group_auth(group_auth_options))
+}
 
 app.listen(PORT, () => {
-  console.log(`Camera proxy listening on port ${PORT}`)
+  console.log(`[Express] listening on port ${PORT}`)
 })

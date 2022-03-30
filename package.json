@@ -11,11 +11,12 @@
   "license": "ISC",
   "dependencies": {
     "@moreillon/authentication_middleware": "^1.0.9",
+    "@moreillon/express_group_based_authorization_middleware": "^2.1.7",
     "@moreillon/express_identification_middleware": "^1.1.0",
     "cors": "^2.8.5",
     "dotenv": "^8.6.0",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "http-proxy": "^1.18.1",
-    "mongoose": "^6.0.2"
+    "mongoose": "^6.2.9"
   }
 }

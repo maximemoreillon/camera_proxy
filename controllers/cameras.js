@@ -21,7 +21,7 @@ const error_handling = (res) => {
 }
 
 
-exports.add_camera = (req, res) => {
+exports.add_camera = (req, res, next) => {
 
   Camera.create(req.body)
     .then((result) => {
@@ -31,7 +31,7 @@ exports.add_camera = (req, res) => {
     .catch(error_handling(res))
 }
 
-exports.remove_camera = (req, res) => {
+exports.remove_camera = (req, res, next) => {
   const {camera_id} = req.params
   Camera.deleteOne({_id:camera_id})
     .then( (result) => {
@@ -41,7 +41,7 @@ exports.remove_camera = (req, res) => {
     .catch(error_handling(res))
 }
 
-exports.update_camera = (req, res) => {
+exports.update_camera = (req, res, next) => {
   const {camera_id} = req.params
   const new_properties = req.body
 
@@ -53,7 +53,7 @@ exports.update_camera = (req, res) => {
     .catch(error_handling(res))
 }
 
-exports.get_all_cameras = (req, res) => {
+exports.get_all_cameras = (req, res, next) => {
   Camera.find({})
     .then( (result) => {
       res.send(result)
@@ -62,7 +62,7 @@ exports.get_all_cameras = (req, res) => {
     .catch(error_handling(res))
 }
 
-exports.get_camera = (req, res) => {
+exports.get_camera = (req, res, next) => {
   const {camera_id} = req.params
   Camera.findOne({_id:camera_id})
     .then( (found_camera) => {
