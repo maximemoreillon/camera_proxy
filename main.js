@@ -1,11 +1,12 @@
 const express = require('express')
 const dotenv = require('dotenv')
 const cors = require('cors')
-const {version} = require('./package.json')
 const auth = require('@moreillon/express_identification_middleware')
 const group_auth = require('@moreillon/express_group_based_authorization_middleware')
 const db = require('./db.js')
+const apiMetrics = require('prometheus-api-metrics')
 const camera_router = require('./routes/cameras.js')
+const {version} = require('./package.json')
 dotenv.config()
 
 
@@ -21,6 +22,7 @@ const {
 const app = express()
 app.use(cors())
 app.use(express.json())
+app.use(apiMetrics())
 
 
 app.get('/', (req, res) => {
