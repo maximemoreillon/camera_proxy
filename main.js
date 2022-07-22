@@ -14,7 +14,7 @@ console.log(`Camera proxy v${version}`)
 
 const {
   PORT = 80,
-  AUTHENTICATION_API_URL,
+  IDENTIFICATION_URL,
   AUTHORIZED_GROUPS,
   GROUP_AUTHORIZATION_URL
 } = process.env
@@ -33,7 +33,7 @@ app.get('/', (req, res) => {
     version: version,
     mongodb: { url: db.url, db: db.db },
     auth: {
-      api_url: AUTHENTICATION_API_URL,
+      url: IDENTIFICATION_URL,
       group_auth: {
         url: GROUP_AUTHORIZATION_URL,
         groups: AUTHORIZED_GROUPS
@@ -43,7 +43,7 @@ app.get('/', (req, res) => {
   })
 })
 
-const auth_options = { url: `${AUTHENTICATION_API_URL}/whoami` }
+const auth_options = { url: IDENTIFICATION_URL }
 app.use('/cameras',auth(auth_options),camera_router)
 
 if(AUTHORIZED_GROUPS && GROUP_AUTHORIZATION_URL) {
