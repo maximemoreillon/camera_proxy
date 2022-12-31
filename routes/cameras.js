@@ -9,15 +9,15 @@ const {
 
 const router = Router()
 
-router.route("/").post(controller.add_camera).get(controller.get_all_cameras)
+router.route("/").post(add_camera).get(get_all_cameras)
 
 router
   .route("/:camera_id")
-  .get(controller.get_camera)
-  .delete(controller.remove_camera)
-  .put(controller.update_camera)
-  .patch(controller.update_camera)
+  .get(get_camera)
+  .delete(remove_camera)
+  .put(update_camera)
+  .patch(update_camera)
 
-router.route("/:camera_id/stream").get(controller.get_stream)
+router.route("/:camera_id/stream").get(get_stream)
 
 module.exports = router
