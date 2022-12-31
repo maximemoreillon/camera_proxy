@@ -6,7 +6,7 @@ const group_auth = require("@moreillon/express_group_based_authorization_middlew
 const db = require("./db.js")
 const apiMetrics = require("prometheus-api-metrics")
 const camera_router = require("./routes/cameras.js")
-const { version } = require("./package.json")
+const { version, author } = require("./package.json")
 dotenv.config()
 
 console.log(`Camera proxy v${version}`)
@@ -25,9 +25,9 @@ app.use(apiMetrics())
 
 app.get("/", (req, res) => {
   res.send({
-    author: "Maxime MOREILLON",
+    author,
     application_name: "Camera proxy",
-    version: version,
+    version,
     mongodb: { url: db.url, db: db.db },
     auth: {
       url: IDENTIFICATION_URL,
