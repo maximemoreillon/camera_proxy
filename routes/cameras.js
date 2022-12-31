@@ -5,6 +5,7 @@ const {
   get_camera,
   update_camera,
   remove_camera,
+  get_stream,
 } = require("../controllers/cameras.js")
 
 const router = Router()
