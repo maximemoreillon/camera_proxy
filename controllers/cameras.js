@@ -61,7 +61,7 @@ exports.get_camera = (req, res, next) => {
     .catch(next)
 }
 
-exports.get_stream = (req, res) => {
+exports.get_stream = (req, res, next) => {
   const { camera_id } = req.params
   Camera.findOne({ _id: camera_id })
     .then((found_camera) => {
