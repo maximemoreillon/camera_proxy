@@ -18,6 +18,8 @@ const {
   GROUP_AUTHORIZATION_URL,
 } = process.env
 
+db.connect()
+
 const app = express()
 app.use(cors())
 app.use(express.json())
