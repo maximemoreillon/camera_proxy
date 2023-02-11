@@ -26,3 +26,4 @@ mongoose
 
 exports.db = MONGODB_DB
 exports.url = MONGODB_URL
+exports.get_state = () => mongoose.connection.readyState

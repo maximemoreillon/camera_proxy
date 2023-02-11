@@ -28,7 +28,7 @@ app.get("/", (req, res) => {
     author,
     application_name: "Camera proxy",
     version,
-    mongodb: { url: db.url, db: db.db },
+    mongodb: { url: db.url, db: db.db, state: db.get_state() },
     auth: {
       url: IDENTIFICATION_URL,
       group_auth: {
