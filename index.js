@@ -41,17 +41,24 @@ app.get("/", (req, res) => {
   })
 })
 
-const auth_options = { url: IDENTIFICATION_URL }
-app.use("/cameras", auth(auth_options), camera_router)
+if (IDENTIFICATION_URL) {
+  console.log(`[Auth] Enabling authentication using ${IDENTIFICATION_URL}`)
+  const auth_options = { url: IDENTIFICATION_URL }
+  app.use(auth(auth_options))
+}
 
 if (AUTHORIZED_GROUPS && GROUP_AUTHORIZATION_URL) {
-  console.log(`[Auth] Enabling group-based authorization`)
+  console.log(
+    `[Auth] Enabling group-based authorization using ${GROUP_AUTHORIZATION_URL}`
+  )
   const group_auth_options = {
     url: GROUP_AUTHORIZATION_URL,
     groups: AUTHORIZED_GROUPS.split(","),
   }
   app.use(group_auth(group_auth_options))
 }
+
+app.use("/cameras", camera_router)
 
 app.use((error, req, res, next) => {
   console.error(error)
