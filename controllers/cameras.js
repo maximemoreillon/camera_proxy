@@ -1,3 +1,4 @@
+// TODO: async
 const Camera = require("../models/camera.js")
 const httpProxy = require("http-proxy")
 
