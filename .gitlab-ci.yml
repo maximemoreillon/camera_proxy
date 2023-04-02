@@ -6,6 +6,7 @@ variables:
   APPLICATION_NAME: camera-proxy
   CONTAINER_IMAGE: ${DOCKER_HUB_USERNAME}/${APPLICATION_NAME}
   CONTAINER_IMAGE_TAGGED: ${DOCKER_HUB_USERNAME}/${APPLICATION_NAME}:${CI_COMMIT_SHORT_SHA}
+  K8S_INGRESS_HOST: api.cameras.home.maximemoreillon.com
 
 image: moreillon/ci-dind
 services:
@@ -41,4 +42,3 @@ deploy:
     - kubectl config use-context moreillon_ci/moreillon_k8s_home/kubernetes-agent:home
   script:
     - envsubst < kubernetes_manifest.yml | kubectl apply -n ${KUBERNETES_NAMESPACE} -f -
-

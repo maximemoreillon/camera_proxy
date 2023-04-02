@@ -13,18 +13,18 @@ spec:
         app: ${APPLICATION_NAME}
     spec:
       containers:
-      - name: ${APPLICATION_NAME}
-        image: ${CONTAINER_IMAGE_TAGGED}
-        ports:
-        - containerPort: 80
-        env:
-        - name: GROUP_AUTHORIZATION_URL
-          value: https://api.groups.maximemoreillon.com/v3/users/self/groups
-        - name: AUTHORIZED_GROUPS
-          value: 0035cdb9-838a-4cdd-8ab5-61dafdf569d8
-        envFrom:
-        - secretRef:
-           name: environment-variables
+        - name: ${APPLICATION_NAME}
+          image: ${CONTAINER_IMAGE_TAGGED}
+          ports:
+            - containerPort: 80
+          env:
+            - name: GROUP_AUTHORIZATION_URL
+              value: https://api.groups.maximemoreillon.com/v3/users/self/groups
+            - name: AUTHORIZED_GROUPS
+              value: 0035cdb9-838a-4cdd-8ab5-61dafdf569d8
+          envFrom:
+            - secretRef:
+                name: environment-variables
 ---
 apiVersion: v1
 kind: Service
@@ -32,29 +32,30 @@ metadata:
   name: ${APPLICATION_NAME}
 spec:
   ports:
-  - port: 80
-    nodePort: 30007
+    - port: 80
   selector:
     app: ${APPLICATION_NAME}
-  type: NodePort
+  type: ClusterIP
 ---
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ${APPLICATION_NAME}
   annotations:
-    kubernetes.io/ingress.class: "nginx"
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    cert-manager.io/cluster-issuer: letsencrypt
 spec:
   tls:
-  - hosts:
-    - api.cameras.home.maximemoreillon.com
-    secretName: ${APPLICATION_NAME}
+    - hosts:
+        - ${K8S_INGRESS_HOST}
+      secretName: ${APPLICATION_NAME}-tls
   rules:
-  - host: api.cameras.home.maximemoreillon.com
-    http:
-      paths:
-      - path: /
-        backend:
-          serviceName: ${APPLICATION_NAME}
-          servicePort: 80
+    - host: ${K8S_INGRESS_HOST}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: ${APPLICATION_NAME}
+                port:
+                  number: 80
