@@ -1,12 +1,12 @@
-const { Router } = require("express")
-const {
+import { Router } from "express"
+import {
   add_camera,
   get_all_cameras,
   get_camera,
   update_camera,
   remove_camera,
   get_stream,
-} = require("../controllers/cameras.js")
+} from "../controllers/cameras"
 
 const router = Router()
 
@@ -21,4 +21,4 @@ router
 
 router.route("/:camera_id/stream").get(get_stream)
 
-module.exports = router
+export default router

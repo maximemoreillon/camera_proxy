@@ -1,5 +1,5 @@
-const mongoose = require("mongoose")
-const dotenv = require("dotenv")
+import mongoose from "mongoose"
+import dotenv from "dotenv"
 
 dotenv.config()
 
@@ -8,18 +8,13 @@ const { MONGODB_URL = "mongodb://mongo", MONGODB_DB = "camera_proxy" } =
 
 // Connection parameters
 const connection_string = `${MONGODB_URL}/${MONGODB_DB}`
-const options = {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}
 
 mongoose.set("strictQuery", true)
 
-// Connect to MongoDB
-const connect = () => {
+export const connect = () => {
   console.log(`[MongoDB] Attempting connection to ${MONGODB_URL}`)
   mongoose
-    .connect(connection_string, options)
+    .connect(connection_string)
     .then(() => {
       console.log("[Mongoose] Initial connection successful")
     })
@@ -29,7 +24,6 @@ const connect = () => {
     })
 }
 
-exports.db = MONGODB_DB
-exports.url = MONGODB_URL
-exports.connect = connect
-exports.get_state = () => mongoose.connection.readyState
+export const db = MONGODB_DB
+export const url = MONGODB_URL
+export const get_state = () => mongoose.connection.readyState

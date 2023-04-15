@@ -1,12 +1,15 @@
-const express = require("express")
-const dotenv = require("dotenv")
-const cors = require("cors")
-const auth = require("@moreillon/express_identification_middleware")
-const group_auth = require("@moreillon/express_group_based_authorization_middleware")
-const db = require("./db.js")
-const apiMetrics = require("prometheus-api-metrics")
-const camera_router = require("./routes/cameras.js")
-const { version, author } = require("./package.json")
+import express from "express"
+import dotenv from "dotenv"
+import cors from "cors"
+import auth from "@moreillon/express_identification_middleware"
+// @ts-ignore
+import group_auth from "@moreillon/express_group_based_authorization_middleware"
+import * as db from "./db"
+import apiMetrics from "prometheus-api-metrics"
+import camera_router from "./routes/cameras"
+import { version, author } from "./package.json"
+import { Request, Response, NextFunction } from "express"
+
 dotenv.config()
 
 console.log(`Camera proxy v${version}`)
@@ -60,7 +63,7 @@ if (AUTHORIZED_GROUPS && GROUP_AUTHORIZATION_URL) {
 
 app.use("/cameras", camera_router)
 
-app.use((error, req, res, next) => {
+app.use((error: any, req: Request, res: Response, next: NextFunction) => {
   console.error(error)
   let { statusCode = 500, message = error } = error
   if (isNaN(statusCode) || statusCode > 600) statusCode = 500
