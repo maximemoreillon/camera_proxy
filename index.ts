@@ -2,7 +2,6 @@ import express from "express"
 import dotenv from "dotenv"
 import cors from "cors"
 import auth from "@moreillon/express_identification_middleware"
-// @ts-ignore
 import group_auth from "@moreillon/express_group_based_authorization_middleware"
 import * as db from "./db"
 import apiMetrics from "prometheus-api-metrics"
