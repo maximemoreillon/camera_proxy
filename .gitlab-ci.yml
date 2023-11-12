@@ -12,7 +12,7 @@ image: moreillon/ci-dind
 services:
   - name: docker:19.03.12-dind
 
-containerization:
+build:
   stage: build
   only:
     - master
