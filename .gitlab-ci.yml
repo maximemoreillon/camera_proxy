@@ -1,5 +1,5 @@
 stages:
-  - containerization
+  - build
   - deploy
 
 variables:
@@ -13,7 +13,7 @@ services:
   - name: docker:19.03.12-dind
 
 containerization:
-  stage: containerization
+  stage: build
   only:
     - master
   tags:
