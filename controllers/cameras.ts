@@ -8,7 +8,7 @@ const proxy = httpProxy.createProxyServer()
 
 const handle_proxy = (req: Request, res: Response, options: any) => {
   proxy.web(req, res, options, (error: any) => {
-    res.status(500).send(error)
+    res.status(400).send(error)
     console.log(error)
   })
 }
