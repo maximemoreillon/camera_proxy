@@ -5,7 +5,7 @@ import cors from "cors"
 import auth from "@moreillon/express_identification_middleware"
 import group_auth from "@moreillon/express_group_based_authorization_middleware"
 import * as db from "./db"
-import apiMetrics from "prometheus-api-metrics"
+import promBundle from "express-prom-bundle"
 import camera_router from "./routes/cameras"
 import { version, author } from "./package.json"
 import { Request, Response, NextFunction } from "express"
@@ -21,13 +21,14 @@ const {
   GROUP_AUTHORIZATION_URL,
 } = process.env
 
+const promOptions = { includeMethod: true, includePath: true }
+
 db.connect()
 
 const app = express()
 app.use(cors())
 app.use(express.json())
-app.use(apiMetrics())
-
+app.use(promBundle(promOptions))
 app.get("/", (req, res) => {
   res.send({
     author,
