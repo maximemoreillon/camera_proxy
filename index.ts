@@ -1,16 +1,20 @@
+import dotenv from "dotenv"
+dotenv.config()
 import express from "express"
 import "express-async-errors"
-import dotenv from "dotenv"
 import cors from "cors"
 import auth from "@moreillon/express_identification_middleware"
 import group_auth from "@moreillon/express_group_based_authorization_middleware"
-import * as db from "./db"
+import {
+  MONGODB_DB,
+  MONGODB_URL,
+  get_state as getMongoState,
+  connect as mongoConnect,
+} from "./db"
 import promBundle from "express-prom-bundle"
 import camera_router from "./routes/cameras"
 import { version, author } from "./package.json"
 import { Request, Response, NextFunction } from "express"
-
-dotenv.config()
 
 console.log(`Camera proxy v${version}`)
 
@@ -23,7 +27,7 @@ const {
 
 const promOptions = { includeMethod: true, includePath: true }
 
-db.connect()
+mongoConnect()
 
 const app = express()
 app.use(cors())
@@ -34,7 +38,7 @@ app.get("/", (req, res) => {
     author,
     application_name: "Camera proxy",
     version,
-    mongodb: { url: db.url, db: db.db, state: db.get_state() },
+    mongodb: { url: MONGODB_URL, db: MONGODB_DB, state: getMongoState() },
     auth: {
       url: IDENTIFICATION_URL,
       group_auth: {

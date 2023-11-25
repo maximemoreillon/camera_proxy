@@ -3,7 +3,7 @@ import dotenv from "dotenv"
 
 dotenv.config()
 
-const { MONGODB_URL = "mongodb://mongo", MONGODB_DB = "camera_proxy" } =
+export const { MONGODB_URL = "mongodb://mongo", MONGODB_DB = "camera_proxy" } =
   process.env
 
 // Connection parameters
@@ -24,6 +24,4 @@ export const connect = () => {
     })
 }
 
-export const db = MONGODB_DB
-export const url = MONGODB_URL
 export const get_state = () => mongoose.connection.readyState
