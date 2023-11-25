@@ -7,7 +7,7 @@ const proxy = httpProxy.createProxyServer()
 
 const handle_proxy = (req: Request, res: Response, options: any) => {
   proxy.web(req, res, options, (error: any) => {
-    throw error
+    if (error) throw error
   })
 }
 
