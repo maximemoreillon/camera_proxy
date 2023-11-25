@@ -1,4 +1,3 @@
-// TODO: async
 import Camera from "../models/camera"
 import httpProxy from "http-proxy"
 import { Request, Response } from "express"
@@ -29,10 +28,14 @@ export const update_camera = async (req: Request, res: Response) => {
   const { camera_id } = req.params
   const new_properties = req.body
 
-  // TODO: use findAndUpdateOne with error on not found
-  const result = await Camera.updateOne({ _id: camera_id }, new_properties)
+  const updatedCamera = await Camera.findByIdAndUpdate(
+    camera_id,
+    new_properties
+  )
+  if (!updatedCamera)
+    throw createHttpError(404, `Camera ${camera_id} not found`)
   console.log(`Camera ${camera_id} updated`)
-  res.send(result)
+  res.send(updatedCamera)
 }
 
 export const get_all_cameras = async (req: Request, res: Response) => {
@@ -43,9 +46,9 @@ export const get_all_cameras = async (req: Request, res: Response) => {
 export const get_camera = async (req: Request, res: Response) => {
   const { camera_id } = req.params
   const found_camera = await Camera.findOne({ _id: camera_id })
-  if (!found_camera) throw createHttpError(404, "Camera not found")
-  res.send(found_camera)
+  if (!found_camera) throw createHttpError(404, `Camera ${camera_id} not found`)
   console.log(`Camera ${camera_id} queried`)
+  res.send(found_camera)
 }
 
 export const get_stream = async (req: Request, res: Response) => {
