@@ -7,7 +7,10 @@ const proxy = httpProxy.createProxyServer()
 
 const handle_proxy = (req: Request, res: Response, options: any) => {
   proxy.web(req, res, options, (error: any) => {
-    if (error) throw error
+    if (error) {
+      console.error(error)
+      res.status(400).send(error)
+    }
   })
 }
 
@@ -59,10 +62,4 @@ export const get_stream = async (req: Request, res: Response) => {
   if (!stream_url)
     throw createHttpError(404, "Camera doest not have a stream URL")
   const proxy_options = { target: stream_url, ignorePath: true }
-
-  try {
-    handle_proxy(req, res, proxy_options)
-  } catch (error) {
-    res.status(400).send(error)
-  }
 }
