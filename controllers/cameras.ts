@@ -62,4 +62,5 @@ export const get_stream = async (req: Request, res: Response) => {
   if (!stream_url)
     throw createHttpError(404, "Camera doest not have a stream URL")
   const proxy_options = { target: stream_url, ignorePath: true }
+  handle_proxy(req, res, proxy_options)
 }

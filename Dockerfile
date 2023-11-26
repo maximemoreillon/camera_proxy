@@ -1,3 +1,4 @@
+# Does not work as expected in Node 20
 FROM node:16
 WORKDIR /usr/src/app
 COPY . .
