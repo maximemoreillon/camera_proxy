@@ -1,20 +1,35 @@
 import mongoose from "mongoose"
-import dotenv from "dotenv"
 
-dotenv.config()
+export const {
+  MONGODB_CONNECTION_STRING,
+  MONGODB_PROTOCOL = "mongodb",
+  MONGODB_USERNAME,
+  MONGODB_PASSWORD,
+  MONGODB_HOST = "localhost",
+  MONGODB_PORT,
+  MONGODB_DB = "food_manager",
+  MONGODB_OPTIONS = "",
+} = process.env
 
-export const { MONGODB_URL = "mongodb://mongo", MONGODB_DB = "camera_proxy" } =
-  process.env
+const mongodbPort = MONGODB_PORT ? `:${MONGODB_PORT}` : ""
 
-// Connection parameters
-const connection_string = `${MONGODB_URL}/${MONGODB_DB}`
+const connectionString =
+  MONGODB_CONNECTION_STRING ||
+  (MONGODB_USERNAME && MONGODB_PASSWORD
+    ? `${MONGODB_PROTOCOL}://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_HOST}${mongodbPort}/${MONGODB_DB}${MONGODB_OPTIONS}`
+    : `${MONGODB_PROTOCOL}://${MONGODB_HOST}${mongodbPort}/${MONGODB_DB}${MONGODB_OPTIONS}`)
+
+export const redactedConnectionString = connectionString.replace(
+  /:.*@/,
+  "://***:***@"
+)
 
 mongoose.set("strictQuery", true)
 
 export const connect = () => {
-  console.log(`[MongoDB] Attempting connection to ${MONGODB_URL}`)
+  console.log(`[MongoDB] Attempting connection to ${redactedConnectionString}`)
   mongoose
-    .connect(connection_string)
+    .connect(connectionString)
     .then(() => {
       console.log("[Mongoose] Initial connection successful")
     })

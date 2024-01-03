@@ -6,8 +6,7 @@ import cors from "cors"
 import auth from "@moreillon/express_identification_middleware"
 import group_auth from "@moreillon/express_group_based_authorization_middleware"
 import {
-  MONGODB_DB,
-  MONGODB_URL,
+  redactedConnectionString,
   get_state as getMongoState,
   connect as mongoConnect,
 } from "./db"
@@ -38,7 +37,10 @@ app.get("/", (req, res) => {
     author,
     application_name: "Camera proxy",
     version,
-    mongodb: { url: MONGODB_URL, db: MONGODB_DB, state: getMongoState() },
+    mongodb: {
+      connectionString: redactedConnectionString,
+      state: getMongoState(),
+    },
     auth: {
       url: IDENTIFICATION_URL,
       group_auth: {
