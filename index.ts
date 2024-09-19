@@ -61,17 +61,17 @@ if (OIDC_JWKS_URI) {
   console.log(`[Auth] Enabling authentication using ${IDENTIFICATION_URL}`)
   const auth_options = { url: IDENTIFICATION_URL }
   app.use(legacyAuthMiddleware(auth_options))
-}
 
-if (AUTHORIZED_GROUPS && GROUP_AUTHORIZATION_URL) {
-  console.log(
-    `[Auth] Enabling group-based authorization using ${GROUP_AUTHORIZATION_URL}`
-  )
-  const group_auth_options = {
-    url: GROUP_AUTHORIZATION_URL,
-    groups: AUTHORIZED_GROUPS.split(","),
+  if (AUTHORIZED_GROUPS && GROUP_AUTHORIZATION_URL) {
+    console.log(
+      `[Auth] Enabling group-based authorization using ${GROUP_AUTHORIZATION_URL}`
+    )
+    const group_auth_options = {
+      url: GROUP_AUTHORIZATION_URL,
+      groups: AUTHORIZED_GROUPS.split(","),
+    }
+    app.use(group_auth(group_auth_options))
   }
-  app.use(group_auth(group_auth_options))
 }
 
 app.use("/cameras", camera_router)
