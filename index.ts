@@ -3,7 +3,8 @@ dotenv.config()
 import express from "express"
 import "express-async-errors"
 import cors from "cors"
-import auth from "@moreillon/express_identification_middleware"
+import oidcMiddleware from "@moreillon/express-oidc"
+import legacyAuthMiddleware from "@moreillon/express_identification_middleware"
 import group_auth from "@moreillon/express_group_based_authorization_middleware"
 import {
   redactedConnectionString,
@@ -22,6 +23,7 @@ const {
   IDENTIFICATION_URL,
   AUTHORIZED_GROUPS,
   GROUP_AUTHORIZATION_URL,
+  OIDC_JWKS_URI,
 } = process.env
 
 const promOptions = { includeMethod: true, includePath: true }
@@ -43,6 +45,7 @@ app.get("/", (req, res) => {
     },
     auth: {
       url: IDENTIFICATION_URL,
+      jwksUri: OIDC_JWKS_URI,
       group_auth: {
         url: GROUP_AUTHORIZATION_URL,
         groups: AUTHORIZED_GROUPS,
@@ -51,10 +54,13 @@ app.get("/", (req, res) => {
   })
 })
 
-if (IDENTIFICATION_URL) {
+if (OIDC_JWKS_URI) {
+  console.log(`[Auth] Enabling OIDC authentication using ${OIDC_JWKS_URI}`)
+  app.use(oidcMiddleware({ jwksUri: OIDC_JWKS_URI }))
+} else if (IDENTIFICATION_URL) {
   console.log(`[Auth] Enabling authentication using ${IDENTIFICATION_URL}`)
   const auth_options = { url: IDENTIFICATION_URL }
-  app.use(auth(auth_options))
+  app.use(legacyAuthMiddleware(auth_options))
 }
 
 if (AUTHORIZED_GROUPS && GROUP_AUTHORIZATION_URL) {

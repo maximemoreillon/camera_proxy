@@ -15,8 +15,6 @@ spec:
       containers:
         - name: ${APPLICATION_NAME}
           image: ${CONTAINER_IMAGE_TAGGED}
-          ports:
-            - containerPort: 80
           env:
             - name: GROUP_AUTHORIZATION_URL
               value: https://api.groups.maximemoreillon.com/v3/users/self/groups
@@ -25,6 +23,8 @@ spec:
           envFrom:
             - secretRef:
                 name: environment-variables
+            - secretRef:
+                name: auth0-env
 ---
 apiVersion: v1
 kind: Service
