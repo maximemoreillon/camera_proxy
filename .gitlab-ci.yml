@@ -16,8 +16,6 @@ build:
   stage: build
   only:
     - master
-  tags:
-    - dind
   before_script:
     - echo "${DOCKER_HUB_PASSWORD}" | docker login --username ${DOCKER_HUB_USERNAME} --password-stdin
   script:
@@ -36,8 +34,6 @@ deploy:
   only:
     - master
   stage: deploy
-  tags:
-    - dind
   before_script:
     - kubectl config use-context moreillon_ci/moreillon_k8s_home/kubernetes-agent:home-talos
   script:
